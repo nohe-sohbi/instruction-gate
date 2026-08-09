@@ -9,6 +9,5 @@
   "repository": "https://github.com/nohe-sohbi/instruction-gate",
   "license": "MIT",
   "keywords": ["hooks", "completeness", "instruction-following", "self-audit", "claude-code"],
-  "skills": "./skills",
-  "hooks": "./hooks/hooks.json"
+  "skills": "./skills"
 }
