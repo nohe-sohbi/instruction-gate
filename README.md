@@ -79,7 +79,3 @@ pip install pytest && pytest tests/ -q
 ```
 
 18 tests running the hooks as real subprocesses against forged JSONL transcripts.
-
-Extracted from
-[codified-context-infrastructure](https://github.com/nohe-sohbi/codified-context-infrastructure).
-MIT.
