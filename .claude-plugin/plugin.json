@@ -1,0 +1,14 @@
+{
+  "name": "instruction-gate",
+  "description": "A completeness gate for instructions: the model commits to an intent and a deliverables checklist before working (UserPromptSubmit), then audits the turn item by item against that checklist before it can end (Stop). Three per-project modes: on (smart, default), strict, off.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Nohé Sohbi",
+    "url": "https://github.com/nohe-sohbi"
+  },
+  "repository": "https://github.com/nohe-sohbi/instruction-gate",
+  "license": "MIT",
+  "keywords": ["hooks", "completeness", "instruction-following", "self-audit", "claude-code"],
+  "skills": "./skills",
+  "hooks": "./hooks/hooks.json"
+}
