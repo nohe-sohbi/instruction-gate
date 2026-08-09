@@ -1,5 +1,6 @@
 {
   "name": "instruction-gate-marketplace",
+  "description": "Instruction-following gates for Claude Code: hooks that make the model commit to a deliverables checklist before working and audit itself against it before ending a turn.",
   "owner": {
     "name": "Nohé Sohbi",
     "url": "https://github.com/nohe-sohbi"
