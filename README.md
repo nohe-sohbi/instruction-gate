@@ -38,6 +38,21 @@ exceptions: a bug in the gate must never break a session.
 
 The repository is its own marketplace, so that is the whole setup.
 
+### Using pi (pi.dev) instead?
+
+pi has no hook system to install into — but it can port the gate into its own
+harness by itself. Paste one line into pi:
+
+```
+Fetch https://raw.githubusercontent.com/nohe-sohbi/instruction-gate/main/PORT-TO-PI.md and follow it.
+```
+
+[PORT-TO-PI.md](PORT-TO-PI.md) is a complete build spec, not a vague prompt:
+the behavior contract (pointing at the hook docstrings as the source of
+truth), the co-existence guards for a harness where other extensions live
+(namespaced `/ig-mode` command, tagged messages, one audit per turn), and the
+verification checklist pi must pass before calling the port done.
+
 ## Modes
 
 ```
