@@ -83,7 +83,11 @@ def looks_multipart(text: str | None) -> bool:
 
 def disabled_by_env() -> bool:
     """INSTRUCTION_GATE=0 kills the whole pair, whatever the mode file says."""
-    return os.environ.get("INSTRUCTION_GATE", "").strip().lower() in {"0", "off", "false"}
+    return os.environ.get("INSTRUCTION_GATE", "").strip().lower() in {
+        "0",
+        "off",
+        "false",
+    }
 
 
 def gate_mode(root) -> str:
