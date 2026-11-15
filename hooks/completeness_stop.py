@@ -52,7 +52,11 @@ from collections import deque
 from pathlib import Path
 
 from completeness_common import (
-    GATE_MODES, disabled_by_env, gate_mode, looks_multipart, project_root,
+    GATE_MODES,
+    disabled_by_env,
+    gate_mode,
+    looks_multipart,
+    project_root,
     set_gate_mode,
 )
 
@@ -141,7 +145,7 @@ def build_message(instruction: str | None) -> str:
         "demanding plausible reading — the user's intent, not the literal "
         "minimum of the words.",
         "Hunt specifically for the three classic gaps:",
-        '- forgotten: an enumeration sampled instead of exhausted '
+        "- forgotten: an enumeration sampled instead of exhausted "
         '("all"/"every"/"each" means every single one; partial execution '
         "counts as NOT DONE);",
         "- lazy: implied deliverables skipped (tests, docs, regenerated "

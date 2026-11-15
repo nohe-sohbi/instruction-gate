@@ -6,14 +6,33 @@ from pathlib import Path
 
 HOOKS_DIR = Path(__file__).resolve().parent.parent / "hooks"
 
-USER = {"type": "user", "message": {"content": "Fix all the parsers and update the docs"}}
-EDIT = {"type": "assistant", "message": {"content": [{
-    "type": "tool_use", "name": "Edit", "input": {"file_path": "/x/parser.py"}}]}}
-READ = {"type": "assistant", "message": {"content": [{
-    "type": "tool_use", "name": "Read", "input": {"file_path": "/x/parser.py"}}]}}
+USER = {
+    "type": "user",
+    "message": {"content": "Fix all the parsers and update the docs"},
+}
+EDIT = {
+    "type": "assistant",
+    "message": {
+        "content": [
+            {"type": "tool_use", "name": "Edit", "input": {"file_path": "/x/parser.py"}}
+        ]
+    },
+}
+READ = {
+    "type": "assistant",
+    "message": {
+        "content": [
+            {"type": "tool_use", "name": "Read", "input": {"file_path": "/x/parser.py"}}
+        ]
+    },
+}
 TEXT = {"type": "assistant", "message": {"content": [{"type": "text", "text": "done"}]}}
-TOOL_RESULT = {"type": "user", "message": {"content": [{
-    "type": "tool_result", "tool_use_id": "t1", "content": "ok"}]}}
+TOOL_RESULT = {
+    "type": "user",
+    "message": {
+        "content": [{"type": "tool_result", "tool_use_id": "t1", "content": "ok"}]
+    },
+}
 
 
 def _project(tmp_path) -> Path:
@@ -41,8 +60,12 @@ def _run_gate(project, transcript, stop_hook_active=False, extra_env=None):
     }
     return subprocess.run(
         [sys.executable, str(HOOKS_DIR / "completeness_stop.py")],
-        input=json.dumps(payload), cwd=project,
-        capture_output=True, text=True, env=env, timeout=30,
+        input=json.dumps(payload),
+        cwd=project,
+        capture_output=True,
+        text=True,
+        env=env,
+        timeout=30,
     )
 
 
@@ -65,15 +88,19 @@ def test_read_only_turn_never_blocks(tmp_path):
 
 def test_loop_guard(tmp_path):
     project = _project(tmp_path)
-    out = _run_gate(project, _transcript(tmp_path, [USER, EDIT, TEXT]),
-                    stop_hook_active=True)
+    out = _run_gate(
+        project, _transcript(tmp_path, [USER, EDIT, TEXT]), stop_hook_active=True
+    )
     assert out.returncode == 0 and out.stderr.strip() == ""
 
 
 def test_disable_env(tmp_path):
     project = _project(tmp_path)
-    out = _run_gate(project, _transcript(tmp_path, [USER, EDIT, TEXT]),
-                    extra_env={"INSTRUCTION_GATE": "0"})
+    out = _run_gate(
+        project,
+        _transcript(tmp_path, [USER, EDIT, TEXT]),
+        extra_env={"INSTRUCTION_GATE": "0"},
+    )
     assert out.returncode == 0 and out.stderr.strip() == ""
 
 
@@ -95,12 +122,10 @@ def test_new_prompt_resets_the_turn(tmp_path):
 def test_min_tools_gates_research_turns(tmp_path):
     project = _project(tmp_path)
     transcript = _transcript(tmp_path, [USER, READ, READ, TEXT])
-    out = _run_gate(project, transcript,
-                    extra_env={"INSTRUCTION_GATE_MIN_TOOLS": "2"})
+    out = _run_gate(project, transcript, extra_env={"INSTRUCTION_GATE_MIN_TOOLS": "2"})
     assert out.returncode == 2
     # Below the threshold: still silent
-    out2 = _run_gate(project, transcript,
-                     extra_env={"INSTRUCTION_GATE_MIN_TOOLS": "3"})
+    out2 = _run_gate(project, transcript, extra_env={"INSTRUCTION_GATE_MIN_TOOLS": "3"})
     assert out2.returncode == 0
 
 
@@ -108,12 +133,10 @@ def test_min_edits_threshold(tmp_path):
     """INSTRUCTION_GATE_MIN_EDITS spares small touch-up turns from the gate."""
     project = _project(tmp_path)
     one_edit = _transcript(tmp_path, [USER, EDIT, TEXT])
-    out = _run_gate(project, one_edit,
-                    extra_env={"INSTRUCTION_GATE_MIN_EDITS": "2"})
+    out = _run_gate(project, one_edit, extra_env={"INSTRUCTION_GATE_MIN_EDITS": "2"})
     assert out.returncode == 0
     two_edits = _transcript(tmp_path, [USER, EDIT, EDIT, TEXT])
-    out2 = _run_gate(project, two_edits,
-                     extra_env={"INSTRUCTION_GATE_MIN_EDITS": "2"})
+    out2 = _run_gate(project, two_edits, extra_env={"INSTRUCTION_GATE_MIN_EDITS": "2"})
     assert out2.returncode == 2
 
 
@@ -123,8 +146,13 @@ def test_audit_is_anchored_not_generic(tmp_path):
     project = _project(tmp_path)
     out = _run_gate(project, _transcript(tmp_path, [USER, EDIT, TEXT]))
     assert out.returncode == 2
-    for anchor in ("presumed INCOMPLETE", "checklist you committed",
-                   "forgotten", "lazy", "reinterpreted"):
+    for anchor in (
+        "presumed INCOMPLETE",
+        "checklist you committed",
+        "forgotten",
+        "lazy",
+        "reinterpreted",
+    ):
         assert anchor in out.stderr
 
 
@@ -135,8 +163,12 @@ def _run_prompt(project, prompt, extra_env=None):
     payload = {"session_id": "s1", "cwd": str(project), "prompt": prompt}
     return subprocess.run(
         [sys.executable, str(HOOKS_DIR / "completeness_prompt.py")],
-        input=json.dumps(payload), cwd=project,
-        capture_output=True, text=True, env=env, timeout=30,
+        input=json.dumps(payload),
+        cwd=project,
+        capture_output=True,
+        text=True,
+        env=env,
+        timeout=30,
     )
 
 
@@ -158,8 +190,7 @@ def test_prompt_anchor_skips_commands_and_empty(tmp_path):
 
 def test_prompt_anchor_shares_the_disable_switch(tmp_path):
     project = _project(tmp_path)
-    out = _run_prompt(project, "Fix everything",
-                      extra_env={"INSTRUCTION_GATE": "0"})
+    out = _run_prompt(project, "Fix everything", extra_env={"INSTRUCTION_GATE": "0"})
     assert out.stdout.strip() == ""
 
 
@@ -170,7 +201,11 @@ def _run_mode(project, *args):
     env = {**os.environ, "CLAUDE_PROJECT_DIR": str(project)}
     return subprocess.run(
         [sys.executable, str(HOOKS_DIR / "completeness_stop.py"), "--mode", *args],
-        cwd=project, capture_output=True, text=True, env=env, timeout=30,
+        cwd=project,
+        capture_output=True,
+        text=True,
+        env=env,
+        timeout=30,
     )
 
 

@@ -35,7 +35,10 @@ import sys
 from pathlib import Path
 
 from completeness_common import (
-    disabled_by_env, gate_mode, looks_multipart, project_root,
+    disabled_by_env,
+    gate_mode,
+    looks_multipart,
+    project_root,
 )
 
 CONTRACT = """Intent contract (the instruction completeness gate is armed for this turn).
@@ -72,12 +75,16 @@ def main():
         if mode != "strict" and not looks_multipart(prompt):
             return  # micro-request: no ceremony at either end of the turn
 
-        print(json.dumps({
-            "hookSpecificOutput": {
-                "hookEventName": "UserPromptSubmit",
-                "additionalContext": CONTRACT,
-            }
-        }))
+        print(
+            json.dumps(
+                {
+                    "hookSpecificOutput": {
+                        "hookEventName": "UserPromptSubmit",
+                        "additionalContext": CONTRACT,
+                    }
+                }
+            )
+        )
     except Exception:
         # Context-only hook: never break a prompt on our own bugs
         pass
